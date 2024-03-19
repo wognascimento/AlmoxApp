@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:telerik="http://schemas.telerik.com/2022/xaml/maui"
+             x:Class="AlmoxApp.Views.MovSaida"
+             xmlns:viewmodel="clr-namespace:AlmoxApp.ViewModels"
+             Title="Movimentação de Saída">
+
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+
+
+        <telerik:RadEntry 
+            x:Name="funcionario"
+            Grid.Row="0" 
+            Grid.Column="0"  
+            Placeholder="Funcionário."
+            IsReadOnly="True"/>
+
+        <Image 
+            Grid.Row="0" Grid.Column="1"
+            HorizontalOptions="End"
+            Source="icons8_cracha_50.png"
+            Aspect="AspectFill"
+            HeightRequest="50"
+            WidthRequest="50">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer 
+                    Command="{Binding Image1TappedCommand}"
+                    CommandParameter="FUNCIONÁRIO"/>
+            </Image.GestureRecognizers>
+
+        </Image>
+
+
+        <telerik:RadComboBox 
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Placeholder="Seleciona o Atendente"
+            DisplayMemberPath="Population"
+            AutomationId="boundComboBox"/>
+
+        <telerik:RadEntry 
+            x:Name="os" 
+            Grid.Row="2" 
+            Grid.Column="0"
+            Placeholder="Número da Ordem de serviço."
+            Keyboard="Numeric"/>
+
+
+        <Image 
+            Grid.Row="2" Grid.Column="1"
+            HorizontalOptions="End"
+            Source="icons8_carrinho_50.png"
+            Aspect="AspectFill"
+            HeightRequest="50"
+            WidthRequest="50">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer 
+                    Command="{Binding Image1TappedCommand}"
+                    CommandParameter="PRODUTO"/>
+            </Image.GestureRecognizers>
+
+        </Image>
+
+        <Label 
+            Grid.Row="3" 
+            Grid.ColumnSpan="2"
+            Margin="0,5,0,5"
+            FontSize="20"
+            Text="Produtos"
+            Background="RoyalBlue"
+            HorizontalTextAlignment="Center" 
+            VerticalTextAlignment="Center"/>
+
+        <telerik:RadListView 
+            x:Name="listView"
+            Grid.Row="4" 
+            Grid.ColumnSpan="2"
+            IsItemsReorderEnabled="True"
+            SelectionMode="None"
+            ItemsSource="{Binding Source}">
+            <telerik:RadListView.ItemTemplate>
+                <DataTemplate>
+                    <telerik:ListViewTemplateCell>
+                        <telerik:ListViewTemplateCell.View>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label 
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Text="{Binding Name}"
+                                    VerticalTextAlignment="Center" />
+
+                                <Label 
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Text="{Binding SobreNome}"
+                                    VerticalTextAlignment="Center" />
+
+                                <telerik:RadEntry 
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="1"
+                                    x:Name="EntryShareName"
+                                    Keyboard="Numeric"
+                                    Text="{Binding Quantidade}"
+                                    AutomationId="radEntry" 
+                                    VerticalTextAlignment="Center" 
+                                    HorizontalTextAlignment="Center">
+                                </telerik:RadEntry>
+
+                            </Grid>
+                        </telerik:ListViewTemplateCell.View>
+                    </telerik:ListViewTemplateCell>
+                </DataTemplate>
+            </telerik:RadListView.ItemTemplate>
+        </telerik:RadListView>
+
+
+        <!--
+        <telerik:RadListView 
+            x:Name="listView"
+            Grid.Row="3" 
+            Grid.ColumnSpan="2"
+            ItemsSource="{Binding Source}">
+            <telerik:RadListView.ItemTemplate>
+                <DataTemplate>
+                    <telerik:ListViewTextCell Text="{Binding Name}" 
+                                      Detail="{Binding SobreNome}" 
+                                      TextColor="Black" 
+                                      DetailColor="Gray" />
+                </DataTemplate>
+            </telerik:RadListView.ItemTemplate>
+            <telerik:RadListView.LayoutDefinition>
+                <telerik:ListViewLinearLayout ItemLength="60" />
+            </telerik:RadListView.LayoutDefinition>
+        </telerik:RadListView>
+-->
+
+        <telerik:RadButton 
+            x:Name="button" 
+            Text="ENVIAR" 
+            Grid.Row="5"  
+            Grid.ColumnSpan="2" 
+            Background="Green" 
+            Command="{Binding SendMovimentacaoCommand}" />
+    </Grid>
+
+</ContentPage>
