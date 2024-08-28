@@ -2,22 +2,23 @@
 using AlmoxApp.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Telerik.Windows.Documents.Spreadsheet.Expressions.Functions;
+using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using System.Net.Http.Headers;
+using System.Reflection.Metadata;
+using System.Text;
+using System.Text.Json;
 
 namespace AlmoxApp.ViewModels
 {
     public partial class MovSaidaViewModel : ObservableObject
     {
 
-
         [ObservableProperty]
-        private List<SourceItem> source =
-            [
-                new SourceItem("Wesley", "Oliveira Gomes", 40),
-                new SourceItem("Vanessa", "Numes Gomes", 42),
-                new SourceItem("Amanda", "Numes Gomes", 16),
-                new SourceItem("Sofia", "Nunes Gomes", 11),
-            ];
+        private ObservableCollection<ProdutoMovModel> produtosMov = [];
+        
+        [ObservableProperty]
+        private ObservableCollection<MovSaidaAlmoxModel> movSaidas = [];
 
         [ObservableProperty]
         private List<LeitorQRCode> leitorQRCode = 
@@ -26,9 +27,29 @@ namespace AlmoxApp.ViewModels
                 new LeitorQRCode("PRODUTO", false),
             ];
 
+        [ObservableProperty]
+        private FuncionarioModel funcionario;
+        
+        [ObservableProperty]
+        private DescricaoModel descricao;
+        
+
+        [ObservableProperty]
+        ObservableCollection<AtendenteAlmoxModel> atendentes;
+
+        [ObservableProperty]
+        AtendenteAlmoxModel atendente;
+        
+        [ObservableProperty]
+        int? nOrdemServico;
+
+        [ObservableProperty]
+        string acao;
+
         [RelayCommand]
         async Task OnImage1Tapped(string acao)
         {
+            Acao = acao;
             var lFuncunc = LeitorQRCode.FirstOrDefault(w => w.Tipo == "FUNCIONÁRIO");
             if (acao == "PRODUTO" && lFuncunc.Leitura == false)
                 return;
@@ -45,6 +66,87 @@ namespace AlmoxApp.ViewModels
         [RelayCommand]
         async Task OnSendMovimentacao()
         {
+
+            if (Funcionario == null)
+            {
+                await App.Current.MainPage.DisplayAlert("Atenção", "Funcionário não foi informado", "OK");
+                return; 
+            }
+            else if (Atendente == null)
+            {
+                await App.Current.MainPage.DisplayAlert("Atenção", "Atendente não foi informado", "OK");
+                return; 
+            }
+            else if (NOrdemServico == null || nOrdemServico == 0)
+            {
+                await App.Current.MainPage.DisplayAlert("Atenção", "Número da O.S não foi informado", "OK");
+                return; 
+            }
+            else if(ProdutosMov.Count == 0)
+            {
+                await App.Current.MainPage.DisplayAlert("Atenção", "Não existe produtos para efetuar a saída.", "OK");
+                return;
+            }
+
+
+            foreach (ProdutoMovModel item in produtosMov)
+            {
+                movSaidas.Add(
+                    new MovSaidaAlmoxModel
+                    {
+                        CodFun = funcionario.CodFun,
+                        CodComplAdicional = item.CodComplAdicional,
+                        Qtde = item.Quantidade,
+                        Data = DateTime.Now.Date,
+                        Funcionario = funcionario.NomeApelido,
+                        Destino = funcionario.Setor,
+                        Setor = funcionario.Setor,
+                        Resp = Atendente.NomeFuncionario,
+                        NumOs = nOrdemServico,
+                    });
+            }
+            //api/SaidaAlmox/almoxMovSaida
+            string apiUrl = "https://api.cipolatti.com.br:44366/api/SaidaAlmox/almoxMovSaida";
+            JsonSerializerOptions options = new()
+            {
+                WriteIndented = true 
+            };
+            string jsonParametro = System.Text.Json.JsonSerializer.Serialize(movSaidas, options);
+            HttpClientHandler handler = new()
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            };
+
+            var parametro = new
+            {
+                saidas = movSaidas.ToArray()
+            };
+
+            var content = new StringContent(jsonParametro, Encoding.UTF8, "application/json");
+            //var jsonContent = JsonConvert.SerializeObject(parametro);
+            //var contentString = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            using HttpClient client = new(handler);
+            try
+            {
+                HttpResponseMessage response = await client.PostAsync(apiUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    await App.Current.MainPage.DisplayAlert("Sucesso", responseBody, "OK");
+                    await Shell.Current.GoToAsync("..");
+                }
+                else
+                {
+                    Console.WriteLine($"Erro: {response.StatusCode} - {response.ReasonPhrase}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ocorreu um erro: {ex.Message}");
+            }
 
         }
     }

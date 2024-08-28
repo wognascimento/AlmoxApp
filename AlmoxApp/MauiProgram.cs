@@ -1,6 +1,7 @@
 ﻿using AlmoxApp.ViewModels;
 using AlmoxApp.Views;
 using BarcodeScanner.Mobile;
+using Syncfusion.Maui.Core.Hosting;
 using Telerik.Maui.Controls.Compatibility;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]

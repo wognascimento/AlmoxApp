@@ -23,14 +23,15 @@
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-
+        
         <telerik:RadEntry 
             x:Name="funcionario"
             Grid.Row="0" 
             Grid.Column="0"  
             Placeholder="Funcionário."
+            Text="{Binding Funcionario.NomeApelido}"
             IsReadOnly="True"/>
-
+        
         <Image 
             Grid.Row="0" Grid.Column="1"
             HorizontalOptions="End"
@@ -46,18 +47,20 @@
 
         </Image>
 
-
+       
         <telerik:RadComboBox 
             Grid.Row="1"
             Grid.ColumnSpan="2"
             Placeholder="Seleciona o Atendente"
-            DisplayMemberPath="Population"
-            AutomationId="boundComboBox"/>
-
+            ItemsSource="{Binding Atendentes}"
+            SelectedItem="{Binding Atendente}"
+            DisplayMemberPath="NomeFuncionario"/>
+        
         <telerik:RadEntry 
             x:Name="os" 
             Grid.Row="2" 
             Grid.Column="0"
+            Text="{Binding NOrdemServico}"
             Placeholder="Número da Ordem de serviço."
             Keyboard="Numeric"/>
 
@@ -76,7 +79,7 @@
             </Image.GestureRecognizers>
 
         </Image>
-
+       
         <Label 
             Grid.Row="3" 
             Grid.ColumnSpan="2"
@@ -86,14 +89,14 @@
             Background="RoyalBlue"
             HorizontalTextAlignment="Center" 
             VerticalTextAlignment="Center"/>
-
+       
         <telerik:RadListView 
             x:Name="listView"
             Grid.Row="4" 
             Grid.ColumnSpan="2"
             IsItemsReorderEnabled="True"
             SelectionMode="None"
-            ItemsSource="{Binding Source}">
+            ItemsSource="{Binding ProdutosMov}">
             <telerik:RadListView.ItemTemplate>
                 <DataTemplate>
                     <telerik:ListViewTemplateCell>
@@ -105,26 +108,14 @@
                                 </Grid.RowDefinitions>
 
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="70" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="100" />
                                 </Grid.ColumnDefinitions>
 
-                                <Label 
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    Text="{Binding Name}"
-                                    VerticalTextAlignment="Center" />
-
-                                <Label 
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Text="{Binding SobreNome}"
-                                    VerticalTextAlignment="Center" />
-
-                                <telerik:RadEntry 
+                                <telerik:RadEntry
                                     Grid.Row="0"
                                     Grid.RowSpan="2"
-                                    Grid.Column="1"
+                                    Grid.Column="0"
                                     x:Name="EntryShareName"
                                     Keyboard="Numeric"
                                     Text="{Binding Quantidade}"
@@ -132,6 +123,20 @@
                                     VerticalTextAlignment="Center" 
                                     HorizontalTextAlignment="Center">
                                 </telerik:RadEntry>
+
+                                <Label 
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="{Binding Planilha}"
+                                    VerticalTextAlignment="Center" />
+
+                                <Label 
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Text="{Binding Descricao}"
+                                    VerticalTextAlignment="Center" />
+
+                                
 
                             </Grid>
                         </telerik:ListViewTemplateCell.View>
@@ -141,26 +146,6 @@
         </telerik:RadListView>
 
 
-        <!--
-        <telerik:RadListView 
-            x:Name="listView"
-            Grid.Row="3" 
-            Grid.ColumnSpan="2"
-            ItemsSource="{Binding Source}">
-            <telerik:RadListView.ItemTemplate>
-                <DataTemplate>
-                    <telerik:ListViewTextCell Text="{Binding Name}" 
-                                      Detail="{Binding SobreNome}" 
-                                      TextColor="Black" 
-                                      DetailColor="Gray" />
-                </DataTemplate>
-            </telerik:RadListView.ItemTemplate>
-            <telerik:RadListView.LayoutDefinition>
-                <telerik:ListViewLinearLayout ItemLength="60" />
-            </telerik:RadListView.LayoutDefinition>
-        </telerik:RadListView>
--->
-
         <telerik:RadButton 
             x:Name="button" 
             Text="ENVIAR" 
@@ -168,6 +153,7 @@
             Grid.ColumnSpan="2" 
             Background="Green" 
             Command="{Binding SendMovimentacaoCommand}" />
+        
     </Grid>
 
 </ContentPage>
