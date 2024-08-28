@@ -77,7 +77,7 @@ namespace AlmoxApp.ViewModels
                 await App.Current.MainPage.DisplayAlert("Atenção", "Atendente não foi informado", "OK");
                 return; 
             }
-            else if (NOrdemServico == null || nOrdemServico == 0)
+            else if (NOrdemServico == null || NOrdemServico == 0)
             {
                 await App.Current.MainPage.DisplayAlert("Atenção", "Número da O.S não foi informado", "OK");
                 return; 
@@ -89,20 +89,20 @@ namespace AlmoxApp.ViewModels
             }
 
 
-            foreach (ProdutoMovModel item in produtosMov)
+            foreach (ProdutoMovModel item in ProdutosMov)
             {
-                movSaidas.Add(
+                MovSaidas.Add(
                     new MovSaidaAlmoxModel
                     {
-                        CodFun = funcionario.CodFun,
+                        CodFun = Funcionario.CodFun,
                         CodComplAdicional = item.CodComplAdicional,
                         Qtde = item.Quantidade,
                         Data = DateTime.Now.Date,
-                        Funcionario = funcionario.NomeApelido,
-                        Destino = funcionario.Setor,
-                        Setor = funcionario.Setor,
+                        Funcionario = Funcionario.NomeApelido,
+                        Destino = Funcionario.Setor,
+                        Setor = Funcionario.Setor,
                         Resp = Atendente.NomeFuncionario,
-                        NumOs = nOrdemServico,
+                        NumOs = NOrdemServico,
                     });
             }
             //api/SaidaAlmox/almoxMovSaida
@@ -111,7 +111,7 @@ namespace AlmoxApp.ViewModels
             {
                 WriteIndented = true 
             };
-            string jsonParametro = System.Text.Json.JsonSerializer.Serialize(movSaidas, options);
+            string jsonParametro = System.Text.Json.JsonSerializer.Serialize(MovSaidas, options);
             HttpClientHandler handler = new()
             {
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
@@ -119,7 +119,7 @@ namespace AlmoxApp.ViewModels
 
             var parametro = new
             {
-                saidas = movSaidas.ToArray()
+                saidas = MovSaidas.ToArray()
             };
 
             var content = new StringContent(jsonParametro, Encoding.UTF8, "application/json");
